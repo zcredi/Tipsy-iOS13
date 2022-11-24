@@ -19,15 +19,16 @@ class CalculatorViewController: UIViewController {
     var tip = 0.10
     var splitNumber = 2
     var billTotal = 0.0
+    var finalResult = "0.0"
     
     @IBAction func tipChanged(_ sender: UIButton) {
         
         billTextField.endEditing(true)
         
         if sender.isSelected {
-                return
-            }
-
+            return
+        }
+        
         zeroPctButton.isSelected = false
         tenPctButton.isSelected = false
         twentyPctButton.isSelected = false
@@ -52,12 +53,17 @@ class CalculatorViewController: UIViewController {
         if bill != "" {
             billTotal = Double(bill)!
             let result = billTotal * (1 + tip) / Double(splitNumber)
-            let resultTo2DecimalPlaces = String(format: "%.2f", result)
-            print(resultTo2DecimalPlaces)
+            finalResult = String(format: "%.2f", result)
         }
+        self.performSegue(withIdentifier: "goToResult", sender: self)
     }
     
-    @IBAction func billText(_ sender: UITextField) {
-
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToResult" {
+            let destinationVC = segue.destination as! ResultsViewController
+            destinationVC.result = finalResult
+            destinationVC.tip = Int(tip * 100)
+            destinationVC.split = splitNumber
+        }
     }
 }
